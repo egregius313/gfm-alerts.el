@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: gfm-alerts-note
+# key: !note
+# group: gfm-alerts
+# --
+> [!NOTE]
+> $0

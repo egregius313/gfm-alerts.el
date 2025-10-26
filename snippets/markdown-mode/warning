@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: gfm-alerts-warning
+# key: !warning
+# group: gfm-alerts
+# --
+> [!WARNING]
+> $0

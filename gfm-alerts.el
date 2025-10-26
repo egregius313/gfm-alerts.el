@@ -22,6 +22,7 @@
   (require 'cl-lib)
   (require 'dash)
   (require 'rx))
+(require 'yasnippet)
 
 (defgroup gfm-alerts ()
   "Highlight [!IMPORTANT] and similar keywords."
@@ -112,6 +113,31 @@
   (if gfm-alerts-mode
       (font-lock-add-keywords nil gfm-alerts--keywords t)
     (font-lock-remove-keywords nil gfm-alerts--keywords)))
+
+(defconst gfm-alerts-snippets-dir
+  (expand-file-name
+   "snippets"
+   (file-name-directory
+    ;; Copied from ‘f-this-file’ from f.el.
+    (cond
+     (load-in-progress load-file-name)
+     ((and (boundp 'byte-compile-current-file) byte-compile-current-file)
+      byte-compile-current-file)
+     (:else (buffer-file-name))))))
+
+;;;###autoload
+(defun gfm-alerts-snippets-initialize ()
+  "Load the `gfm-alerts' snippets directory."
+  ;; NOTE: we add the symbol `gfm-alerts-snippets-dir' rather than its
+  ;; value, so that yasnippet will automatically find the directory
+  ;; after this package is updated (i.e., moves directory).
+  (unless (member 'gfm-alerts-snippets-dir yas-snippet-dirs)
+    (add-to-list 'yas-snippet-dirs 'gfm-alerts-snippets-dir t)
+    (yas--load-snippet-dirs)))
+
+;;;###autoload
+(eval-after-load 'yasnippet
+  '(gfm-alerts-snippets-initialize))
 
 (provide 'gfm-alerts)
 ;;; gfm-alerts.el ends here

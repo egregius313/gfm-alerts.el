@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: gfm-alerts-important
+# key: !important
+# group: gfm-alerts
+# --
+#+begin_quote
+[!IMPORTANT]
+$0
+#+end_quote

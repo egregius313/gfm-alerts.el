@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: gfm-alerts-caution
+# key: !caution
+# group: gfm-alerts
+# --
+#+begin_quote
+[!CAUTION]
+$0
+#+end_quote
