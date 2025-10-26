@@ -1,4 +1,4 @@
-;;; gfm-alerts.el --- Faces for the [!IMPORTANT] style alerts in GitHub Flavored Markdown  -*- lexical-binding: t; -*-
+;;; gfm-alerts.el --- Faces for alerts in GitHub Flavored Markdown  -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (C) 2025 Edward Minnix III
 ;;
