@@ -14,7 +14,7 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; Commentary:
-;;
+;; Provides syntax highlighting for the [!NOTE] style alerts found in GitHub Flavored Markdown.
 ;;
 ;;
 ;;; Code:
