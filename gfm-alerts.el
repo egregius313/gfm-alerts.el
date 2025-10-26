@@ -9,7 +9,7 @@
 ;; Version: 0.0.1
 ;; Keywords: faces
 ;; Homepage: https://github.com/egregius313/gfm-alerts
-;; Package-Requires: ((emacs "25.1"))
+;; Package-Requires: ((emacs "25.1") (dash "2.20") (yasnippet "0.8.0"))
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
