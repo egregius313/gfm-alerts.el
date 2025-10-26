@@ -43,9 +43,15 @@
   "Regexp for recognizing alerts.")
 
 (defconst gfm-alerts-md-rx
-  (rx line-start (* blank) ?> (+ space) "[!"
-      (group (or "CAUTION" "IMPORTANT" "NOTE" "TIP" "WARNING"))
-      "]" line-end)
+  (rx line-start
+      (* blank)
+      ?>
+      (+ space)
+      (group-n 1
+        "[!"
+        (group-n 2 (or "CAUTION" "IMPORTANT" "NOTE" "TIP" "WARNING"))
+        "]")
+      line-end)
   "Regexp for recognizing alerts.")
 
 (defvar gfm-alerts--keywords
@@ -73,18 +79,26 @@
 (gfm-alerts--define-alert "WARNING" "#9b6500")
 
 (defun gfm-alerts--start-of-quote ()
-  (save-excursion
-    (forward-line -1)
-    (string-prefix-p "#+begin_quote" (buffer-substring-no-properties (line-beginning-position) (line-end-position)) t)))
+  (let ((previous-line (save-excursion
+                         (forward-line -1)
+                         (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+    (cond
+     ((derived-mode-p 'markdown-mode)
+      (not (string-prefix-p ">" previous-line)))
+     ((derived-mode-p 'org-mode)
+      (string-prefix-p "#+begin_quote" previous-line t)))))
 
 (defun gfm-alerts--search (&optional bound backward)
-  (cl-block nil
-    (while (funcall (if backward #'re-search-backward #'re-search-forward) gfm-alerts-org-rx bound t)
-      (cond
-       ((gfm-alerts--start-of-quote)
-        (cl-return t))
-       ((and bound (funcall (if backward #'<= #'>=) (point) bound))
-        (cl-return nil))))))
+  (let ((regexp (cond
+                 ((derived-mode-p 'markdown-mode) gfm-alerts-md-rx)
+                 ((derived-mode-p 'org-mode) gfm-alerts-org-rx))))
+    (cl-block nil
+      (while (funcall (if backward #'re-search-backward #'re-search-forward) regexp bound t)
+        (cond
+         ((gfm-alerts--start-of-quote)
+          (cl-return t))
+         ((and bound (funcall (if backward #'<= #'>=) (point) bound))
+          (cl-return nil)))))))
 
 (defun gfm-alerts--get-face ()
   (let* ((keyword (match-string 2))
