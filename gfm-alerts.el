@@ -81,8 +81,8 @@
 
 (defun gfm-alerts--magit-commitmsg-buffer-p ()
   "Determine if the current buffer is a Magit commit message buffer."
-  (and (boundp 'git-commit-mode)
-       git-commit-mode))
+  (when (boundp 'git-commit-major-mode)
+    (eq git-commit-major-mode 'text-mode)))
 
 (defun gfm-alerts--start-of-quote ()
   (let ((previous-line (save-excursion
@@ -91,16 +91,16 @@
     (cond
      ((derived-mode-p 'markdown-mode)
       (not (string-prefix-p ">" previous-line)))
-     ((gfm-alerts--magit-commitmsg-buffer-p)
-      (not (string-prefix-p ">" previous-line)))
      ((derived-mode-p 'org-mode)
-      (string-prefix-p "#+begin_quote" previous-line t)))))
+      (string-prefix-p "#+begin_quote" previous-line t))
+     ((gfm-alerts--magit-commitmsg-buffer-p)
+      (not (string-prefix-p ">" previous-line))))))
 
 (defun gfm-alerts--search (&optional bound backward)
   (let ((regexp (cond
                  ((derived-mode-p 'markdown-mode) gfm-alerts-md-rx)
-                 ((gfm-alerts--magit-commitmsg-buffer-p) gfm-alerts-md-rx)
-                 ((derived-mode-p 'org-mode) gfm-alerts-org-rx))))
+                 ((derived-mode-p 'org-mode) gfm-alerts-org-rx)
+                 ((gfm-alerts--magit-commitmsg-buffer-p) gfm-alerts-md-rx))))
     (cl-block nil
       (while (funcall (if backward #'re-search-backward #'re-search-forward) regexp bound t)
         (cond
