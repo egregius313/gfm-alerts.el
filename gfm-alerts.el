@@ -89,7 +89,7 @@
                          (forward-line -1)
                          (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
     (cond
-     ((or (derived-mode-p 'markdown-mode))
+     ((derived-mode-p 'markdown-mode)
       (not (string-prefix-p ">" previous-line)))
      ((gfm-alerts--magit-commitmsg-buffer-p)
       (not (string-prefix-p ">" previous-line)))
