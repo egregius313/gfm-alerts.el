@@ -5,8 +5,8 @@
 ;; Author: Edward Minnix III <egregius313@gmail.com>
 ;; Maintainer: Edward Minnix III <egregius313@gmail.com>
 ;; Created: October 25, 2025
-;; Modified: October 26, 2025
-;; Version: 0.0.1
+;; Modified: August 20, 2026
+;; Version: 0.0.2
 ;; Keywords: faces
 ;; Homepage: https://github.com/egregius313/gfm-alerts
 ;; Package-Requires: ((emacs "25.1") (dash "2.20") (yasnippet "0.8.0"))
@@ -79,12 +79,19 @@
 (gfm-alerts--define-alert "TIP" "#198032")
 (gfm-alerts--define-alert "WARNING" "#9b6500")
 
+(defun gfm-alerts--magit-commitmsg-buffer-p ()
+  "Determine if the current buffer is a Magit commit message buffer."
+  (and (boundp 'git-commit-mode)
+       git-commit-mode))
+
 (defun gfm-alerts--start-of-quote ()
   (let ((previous-line (save-excursion
                          (forward-line -1)
                          (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
     (cond
-     ((derived-mode-p 'markdown-mode)
+     ((or (derived-mode-p 'markdown-mode))
+      (not (string-prefix-p ">" previous-line)))
+     ((gfm-alerts--magit-commitmsg-buffer-p)
       (not (string-prefix-p ">" previous-line)))
      ((derived-mode-p 'org-mode)
       (string-prefix-p "#+begin_quote" previous-line t)))))
@@ -92,6 +99,7 @@
 (defun gfm-alerts--search (&optional bound backward)
   (let ((regexp (cond
                  ((derived-mode-p 'markdown-mode) gfm-alerts-md-rx)
+                 ((gfm-alerts--magit-commitmsg-buffer-p) gfm-alerts-md-rx)
                  ((derived-mode-p 'org-mode) gfm-alerts-org-rx))))
     (cl-block nil
       (while (funcall (if backward #'re-search-backward #'re-search-forward) regexp bound t)
